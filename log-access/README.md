@@ -100,19 +100,19 @@ public class LogAccessConfig {
 ````java
 // 方式一：@LogAccess标记在类上，对类的所有方法起作用
 @LogAccess
-public class EventMessageFacadeImpl implements EventMessageFacade {
+public class MessageFacadeImpl implements MessageFacade {
     @Override
-    public Result<EventMessageDTO> queryLatestCreditInfo(String custId, Integer eventType, String productCode) {
+    public Result<MessageDTO> sendMessage(String msgTye, String msg) {
         // xxxx
     }
 }
 ````
 ````java
 // 方式二：@LogAccess标记在方法上，仅对该方法起作用
-public class EventMessageFacadeImpl implements EventMessageFacade {
+public class MessageFacadeImpl implements MessageFacade {
     @LogAccess
     @Override
-    public Result<EventMessageDTO> queryLatestCreditInfo(String custId, Integer eventType, String productCode) {
+    public Result<MessageDTO> sendMessage(String msgTye, String msg) {
         // xxxx
     }
 }
