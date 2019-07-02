@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 /**
- * 日志跟踪信息Filter
+ * http请求日志跟踪信息Filter
  *
  * @Author chenck
  * @Date 2019/1/9 16:37

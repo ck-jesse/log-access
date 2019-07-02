@@ -14,16 +14,32 @@
     <properties>
         <!-- project配置 -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <jdk.version>1.7</jdk.version>
+        <jdk.version>1.8</jdk.version>
+
+        <!-- 平台工具包组件 -->
+        <platform.common.dto.version>1.0.0</platform.common.dto.version>
+        <platform.common.util.version>1.0.0</platform.common.util.version>
+
+        <!-- spring 版本保持与spring-boot中依赖的spring版本一致 -->
+        <spring.version>5.1.3.RELEASE</spring.version>
+
+        <!-- servlet -->
+        <servlet.api.version>3.1.0</servlet.api.version>
+
+        <!-- dubbo -->
+        <dubbo.version>2.7.1</dubbo.version>
+
+        <!-- aspectj -->
+        <aspectj.version>1.8.13</aspectj.version>
+
+        <!-- jackson -->
+        <jackson.version>2.8.8</jackson.version>
 
         <junit.version>4.12</junit.version>
-        <lombok.version>1.18.0</lombok.version>
-        <servlet.api.version>3.1.0</servlet.api.version>
-        <springframework.version>4.3.8.RELEASE</springframework.version>
-        <dubbo.version>2.5.4-SNAPSHOT</dubbo.version>
-        <aspectj.version>1.8.13</aspectj.version>
-        <jackson.version>2.8.8</jackson.version>
-        <commons.lang.version>3.3.2</commons.lang.version>
+        <lombok.version>1.18.4</lombok.version>
+
+        <!-- 日志相关 -->
+        <commons.lang3.version>3.3.2</commons.lang3.version>
         <logback.version>1.1.11</logback.version>
         <slf4j.version>1.7.25</slf4j.version>
         <log4j-api.version>2.7</log4j-api.version>
@@ -32,16 +48,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>${lombok.version}</version>
+            <groupId>com.ck.platform</groupId>
+            <artifactId>common-dto</artifactId>
+            <version>${platform.common.dto.version}</version>
         </dependency>
 
         <dependency>
@@ -55,15 +64,21 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>${springframework.version}</version>
+            <version>${spring.version}</version>
             <!--<scope>provided</scope>-->
         </dependency>
 
         <dependency>
-            <groupId>com.alibaba</groupId>
+            <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo</artifactId>
             <version>${dubbo.version}</version>
             <!--<scope>provided</scope>-->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework</groupId>
+                    <artifactId>spring-context</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -79,9 +94,22 @@
         </dependency>
 
         <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>${commons.lang.version}</version>
+            <version>${commons.lang3.version}</version>
         </dependency>
 
         <!--<dependency>

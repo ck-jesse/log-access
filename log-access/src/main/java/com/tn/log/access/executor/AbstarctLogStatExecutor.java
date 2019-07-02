@@ -1,13 +1,14 @@
 package com.tn.log.access.executor;
 
+import com.ck.platform.common.exception.BizException;
+import com.ck.platform.common.exception.BizResultCode;
 import com.tn.log.access.AccessLogger;
 import com.tn.log.access.LogAccessStatInfo;
 import com.tn.log.access.annotation.LogAccess;
 import com.tn.log.access.consts.LogAccessConsts;
-import com.tn.log.access.exception.BizException;
 import com.tn.log.access.jackson.ObjectMapperSingleton;
-import com.tn.log.access.util.NetUtils;
 import com.tn.log.access.util.MDCLogTracerContextUtil;
+import com.tn.log.access.util.NetUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -86,7 +87,7 @@ public abstract class AbstarctLogStatExecutor implements LogStatExecutor {
                     BizException bizException = (BizException) throwable;
                     logAccessStatInfo.setResp_txt("retcode=" + bizException.getCode() + "&retmsg=" + bizException.getMsg());
                 } else {
-                    Object code = BizException.ERROR;
+                    Object code = BizResultCode.ERR_SYSTEM.getCode();
                     Object msg = throwable.getMessage();
                     Class<?> clazz = throwable.getClass();
                     try {
@@ -113,7 +114,7 @@ public abstract class AbstarctLogStatExecutor implements LogStatExecutor {
                         logger.error("finishLogAccessStat get code and msg error from Exception:" + throwable.getClass() + ", cause ", e);
                     }
                     if (null == code) {
-                        code = BizException.ERROR;
+                        code = BizResultCode.ERR_SYSTEM.getCode();
                     }
                     if (null == msg) {
                         msg = throwable.getMessage();

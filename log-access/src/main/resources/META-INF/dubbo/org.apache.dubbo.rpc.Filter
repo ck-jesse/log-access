@@ -1,0 +1,2 @@
+DubboTraceInfoAttachmentFilter=com.tn.log.access.filter.dubbo.DubboTraceInfoAttachmentFilter
+DubboTraceInfoDetachmentFilter=com.tn.log.access.filter.dubbo.DubboTraceInfoDetachmentFilter

@@ -10,7 +10,7 @@ public enum RequestType {
     METHOD("METHOD", "普通方法的执行"),
     HTTP("HTTP", "http接口的执行"),
     DUBBO("DUBBO", "dubbo接口的执行"),
-    OPENAPI("OPENAPI", "调用第三方开放API"), // 此类型主要是在我方调用第三方API的场景下记录请求参数和响应参数，做到有迹可循，同时方便排查问题
+    OUTAPI("OUTAPI", "调用第三方API"), // 此类型主要是在我方调用第三方API的场景下记录请求参数和响应参数，做到有迹可循，同时方便排查问题
     ;
 
     private String type;
