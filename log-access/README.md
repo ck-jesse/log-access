@@ -127,9 +127,9 @@ public class MessageFacadeImpl implements MessageFacade {
 
 【字段描述】
 访问时间：开始的访问时间，
-执行耗时：业务方法的执行时间，单位毫秒(ms)，
 执行结果：用于区分该请求是否正常响应，N 对应normal，表示正常响应，E 对应error，表示出现异常，
 请求类型：METHOD 表示普通方法、HTTP 表示http请求、DUBBO 表示dubbo请求，
+执行耗时：业务方法的执行时间，单位毫秒(ms)，
 消息跟踪号：对应trace_id，用于日志链路追踪
 请求参数：json格式串
 响应参数：json格式串
@@ -146,13 +146,13 @@ attachment：用于标记后面的是附件参数
 
 ### 5.1 普通方法的访问日志样例
 ```json
-2019-05-14 16:32:07.411|38|N|METHOD|com.xx.xx.XXService|xxMethod|10.1.1.48|10.1.1.48|3a1979e559e24c56b8b866731155c889|["1000008684","fast"]|{"status":200,"message":null,"data":{"code":"success","createTime":1557492448000,"updateTime":1557492979000},"error":false,"success":true}|attachtment|
+2019-05-14 16:32:07.411|N|METHOD|43ms|com.xx.xx.XXService|xxMethod|10.1.1.48|10.1.1.48|3a1979e559e24c56b8b866731155c889|["1000008684","fast"]|{"status":200,"message":null,"data":{"code":"success","createTime":1557492448000,"updateTime":1557492979000},"error":false,"success":true}|attachtment|
 ```
 ### 5.2 http接口的访问日志样例
 ```json
-2019-05-14 16:32:07.405|104|N|HTTP|xx-web|test/test|10.1.1.48|127.0.0.1|3a1979e559e24c56b8b866731155c889|fast|{"status":200,"message":null,"data":{"code":"success","createTime":1557492448000,"updateTime":1557492979000},"error":false,"success":true}|attachtment|
+2019-05-14 16:32:07.405|N|HTTP|104ms|xx-web|test/test|10.1.1.48|127.0.0.1|3a1979e559e24c56b8b866731155c889|fast|{"status":200,"message":null,"data":{"code":"success","createTime":1557492448000,"updateTime":1557492979000},"error":false,"success":true}|attachtment|
 ```
 ### 5.3 dubbo接口的访问日志样例
 ```json
-2019-05-14 13:54:42.880|21|NORMAL|DUBBO|dubbo://127.0.0.1:20885/group/com.xx.xx.XXFacade|queryXX|10.1.1.48|10.1.1.48:50542|3a1979e559e24c56b8b866731155c889|["1000008684",3,"fast"]|{"status":200,"message":null,"data":{"code":"success","createTime":1557492448000,"updateTime":1557492979000},"error":false,"success":true}|attachtment|
+2019-05-14 13:54:42.880|N|DUBBO|57ms|dubbo://127.0.0.1:20885/group/com.xx.xx.XXFacade|queryXX|10.1.1.48|10.1.1.48:50542|3a1979e559e24c56b8b866731155c889|["1000008684",3,"fast"]|{"status":200,"message":null,"data":{"code":"success","createTime":1557492448000,"updateTime":1557492979000},"error":false,"success":true}|attachtment|
 ```

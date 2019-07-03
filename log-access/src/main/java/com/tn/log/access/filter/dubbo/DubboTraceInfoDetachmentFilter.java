@@ -1,5 +1,6 @@
 package com.tn.log.access.filter.dubbo;
 
+import com.tn.log.access.filter.TracingVariable;
 import com.tn.log.access.util.MDCLogTracerContextUtil;
 import org.apache.dubbo.common.extension.Activate;
 import org.apache.dubbo.rpc.Filter;
@@ -23,18 +24,16 @@ public class DubboTraceInfoDetachmentFilter implements Filter {
 
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
-        String traceId = RpcContext.getContext().getAttachment("trace_id");
-        LOGGER.info("=== DubboTraceInfoDetachmentFilter traceId: {}", traceId);
+        String traceId = RpcContext.getContext().getAttachment(TracingVariable.TRACE_ID);
+        LOGGER.info("Detachment traceId = {}", traceId);
 
         if (traceId != null) {
             MDCLogTracerContextUtil.attachTraceId(traceId);
         }
-        Result result = null;
         try {
-            result = invoker.invoke(invocation);
+            return invoker.invoke(invocation);
         } finally {
             MDCLogTracerContextUtil.removeTraceId();
         }
-        return result;
     }
 }

@@ -2,6 +2,7 @@ package com.tn.log.access.filter.servlet;
 
 import com.tn.log.access.filter.TracingVariable;
 import com.tn.log.access.util.MDCLogTracerContextUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +26,21 @@ public class ServletTraceInfoAttachmentFilter implements Filter {
 
     private static final Logger logger = LoggerFactory.getLogger(ServletTraceInfoAttachmentFilter.class);
 
+    /**
+     * trace_id前缀，目的是为了根据trace_id前缀就可以区分出请求最前端的系统，方便人为溯源
+     * <p>
+     * 建议使用为系统标识的简称
+     */
+    private String traceIdPrefix;
+
+    public ServletTraceInfoAttachmentFilter() {
+
+    }
+
+    public ServletTraceInfoAttachmentFilter(String traceIdPrefix) {
+        this.traceIdPrefix = traceIdPrefix;
+    }
+
     @Override
     public void destroy() {
 
@@ -44,13 +60,24 @@ public class ServletTraceInfoAttachmentFilter implements Filter {
         try {
             // 当请求中无trace_id时，默认生成一个
             if (traceId == null) {
-                traceId = UUID.randomUUID().toString().replace("-", "");
+                traceId = genTraceId();
             }
             MDCLogTracerContextUtil.attachTraceId(traceId);
             chain.doFilter(request, response);
         } finally {
             MDCLogTracerContextUtil.removeTraceId();
         }
+    }
+
+    /**
+     * 生成trace_id
+     */
+    private String genTraceId() {
+        String traceId = UUID.randomUUID().toString().replace("-", "");
+        if (StringUtils.isNotBlank(traceIdPrefix)) {
+            traceId = traceIdPrefix + traceId;
+        }
+        return traceId;
     }
 
 }
