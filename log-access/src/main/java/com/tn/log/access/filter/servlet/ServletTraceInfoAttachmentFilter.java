@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.UUID;
 
 /**
- * 日志跟踪信息Filter
+ * http请求日志跟踪信息Filter
  *
  * @Author chenck
  * @Date 2019/1/9 16:37
@@ -29,11 +29,13 @@ public class ServletTraceInfoAttachmentFilter implements Filter {
 
     /**
      * trace_id前缀，目的是为了根据trace_id前缀就可以区分出请求最前端的系统，方便人为溯源
+     * <p>
+     * 建议使用为系统标识的简称
      */
-    @Value("${trace.id.prefix:}")
     private String traceIdPrefix;
 
     public ServletTraceInfoAttachmentFilter() {
+
     }
 
     public ServletTraceInfoAttachmentFilter(String traceIdPrefix) {
@@ -58,7 +60,7 @@ public class ServletTraceInfoAttachmentFilter implements Filter {
         String traceId = requestHttp.getHeader(TracingVariable.TRACE_ID);
         try {
             // 当请求中无trace_id时，默认生成一个
-            if (StringUtils.isBlank(traceId)) {
+            if (traceId == null) {
                 traceId = genTraceId();
             }
             MDCLogTracerContextUtil.attachTraceId(traceId);
@@ -72,7 +74,11 @@ public class ServletTraceInfoAttachmentFilter implements Filter {
      * 生成trace_id
      */
     private String genTraceId() {
-        return traceIdPrefix + UUID.randomUUID().toString().replace("-", "");
+        String traceId = UUID.randomUUID().toString().replace("-", "");
+        if (StringUtils.isNotBlank(traceIdPrefix)) {
+            traceId = traceIdPrefix + traceId;
+        }
+        return traceId;
     }
 
 }

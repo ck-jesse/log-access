@@ -1,8 +1,8 @@
 package com.tn.log.access.executor;
 
-import com.alibaba.dubbo.rpc.RpcContext;
 import com.tn.log.access.annotation.LogAccess;
 import com.tn.log.access.util.RequestUtil;
+import org.apache.dubbo.rpc.RpcContext;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.annotation.Annotation;
@@ -40,6 +40,7 @@ public class LogStatExecutorFactory {
         mappingsSet.add("org.springframework.web.bind.annotation.PatchMapping");
 
         dubboServiceSet.add("com.alibaba.dubbo.config.annotation.Service");
+        dubboServiceSet.add("org.apache.dubbo.config.annotation.Service");
     }
 
     /**
@@ -85,7 +86,7 @@ public class LogStatExecutorFactory {
      * <p>
      * 注意：RpcContext是线程级别的，
      * 场景：http方法A中，先调用了dubbo接口B，再调用dubbo接口C（注：B和C均为远程的dubbo服务）
-     * 1、若请求方法A时，且自信完毕后，则RpcContext中包含的是B的相关信息
+     * 1、若请求方法A时，且执行完毕后，则RpcContext中包含的是B的相关信息
      * <p>
      * 场景：dubbo接口A中调用本地dubbo接口B
      * 1、当请求dubbo接口A时，RpcContext中始终都是A相关的信息，因为B此时本质就是一个普通的本地方法调用而已

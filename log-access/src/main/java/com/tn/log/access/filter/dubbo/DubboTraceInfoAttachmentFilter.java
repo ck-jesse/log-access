@@ -1,13 +1,14 @@
 package com.tn.log.access.filter.dubbo;
 
-import com.alibaba.dubbo.common.extension.Activate;
-import com.alibaba.dubbo.rpc.Filter;
-import com.alibaba.dubbo.rpc.Invocation;
-import com.alibaba.dubbo.rpc.Invoker;
-import com.alibaba.dubbo.rpc.Result;
-import com.alibaba.dubbo.rpc.RpcContext;
-import com.alibaba.dubbo.rpc.RpcException;
+import com.tn.log.access.filter.TracingVariable;
 import com.tn.log.access.util.MDCLogTracerContextUtil;
+import org.apache.dubbo.common.extension.Activate;
+import org.apache.dubbo.rpc.Filter;
+import org.apache.dubbo.rpc.Invocation;
+import org.apache.dubbo.rpc.Invoker;
+import org.apache.dubbo.rpc.Result;
+import org.apache.dubbo.rpc.RpcContext;
+import org.apache.dubbo.rpc.RpcException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,14 +25,11 @@ public class DubboTraceInfoAttachmentFilter implements Filter {
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         String traceId = MDCLogTracerContextUtil.getTraceId();
-        LOGGER.info("=== DubboTraceInfoAttachmentFilter traceId: {}", traceId);
+        LOGGER.info("Attachment traceId = {}", traceId);
 
         if (traceId != null) {
-            RpcContext.getContext().setAttachment("trace_id", traceId);
+            RpcContext.getContext().setAttachment(TracingVariable.TRACE_ID, traceId);
         }
-
-        Result result = invoker.invoke(invocation);
-
-        return result;
+        return invoker.invoke(invocation);
     }
 }

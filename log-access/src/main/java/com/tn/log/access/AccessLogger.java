@@ -41,11 +41,11 @@ public class AccessLogger {
             StringBuilder sb = new StringBuilder(1024);
             sb.append(getDateFromMillis(stat.getAccess_time()));
             sb.append("|");
-            sb.append(stat.getExec_time());
-            sb.append("|");
             sb.append(stat.getExec_result());
             sb.append("|");
             sb.append(stat.getRequest_type());
+            sb.append("|");
+            sb.append(stat.getExec_time()).append("ms");
             sb.append("|");
             sb.append(stat.getMoudle_name());
             sb.append("|");

@@ -11,6 +11,8 @@
 		   http://www.springframework.org/schema/aop/spring-aop.xsd"
        default-autowire="byName">
 
+    <!-- 此XML配置文件为使用log-access的一种方式，在springxml配置文件中引入即可 -->
+
     <!-- 启动cglib类的动态代理 -->
     <aop:aspectj-autoproxy proxy-target-class="true"/>
 

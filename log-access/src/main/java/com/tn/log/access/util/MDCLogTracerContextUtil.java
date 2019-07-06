@@ -1,6 +1,7 @@
 package com.tn.log.access.util;
 
 
+import com.tn.log.access.filter.TracingVariable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -22,8 +23,8 @@ public class MDCLogTracerContextUtil {
             return;
         }
 
-        mdcPut("trace_id", traceId);
-        mdcPut("local_ip", localIp);
+        mdcPut(TracingVariable.TRACE_ID, traceId);
+        mdcPut(TracingVariable.LOCAL_IP, localIp);
     }
 
     private static void mdcPut(String key, String val) {
@@ -39,11 +40,11 @@ public class MDCLogTracerContextUtil {
     }
 
     public static void removeTraceId() {
-        mdcRemove("trace_id");
+        mdcRemove(TracingVariable.TRACE_ID);
     }
 
     public static String getTraceId() {
-        return mdcGet("trace_id");
+        return mdcGet(TracingVariable.TRACE_ID);
     }
 
     public static void main(String[] args) {

@@ -1,10 +1,10 @@
 package com.tn.log.access.executor;
 
-import com.alibaba.dubbo.rpc.RpcContext;
-import com.tn.log.access.consts.RequestType;
 import com.tn.log.access.annotation.LogAccess;
+import com.tn.log.access.consts.RequestType;
 import com.tn.log.access.jackson.ObjectMapperSingleton;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.rpc.RpcContext;
 
 import java.lang.reflect.Method;
 
