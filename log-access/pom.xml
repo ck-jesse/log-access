@@ -50,6 +50,8 @@
             <version>${servlet.api.version}</version>
             <!-- provided 表明该包只在编译和测试的时候用 -->
             <scope>provided</scope>
+            <!-- 可选依赖 -->
+            <optional>true</optional>
         </dependency>
 
         <dependency>
@@ -57,6 +59,7 @@
             <artifactId>spring-webmvc</artifactId>
             <version>${springframework.version}</version>
             <!--<scope>provided</scope>-->
+            <optional>true</optional>
         </dependency>
 
         <dependency>
@@ -64,6 +67,7 @@
             <artifactId>dubbo</artifactId>
             <version>${dubbo.version}</version>
             <!--<scope>provided</scope>-->
+            <optional>true</optional>
         </dependency>
 
         <dependency>
