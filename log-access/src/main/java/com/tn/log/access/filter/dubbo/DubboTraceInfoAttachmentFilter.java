@@ -25,7 +25,7 @@ public class DubboTraceInfoAttachmentFilter implements Filter {
     @Override
     public Result invoke(Invoker<?> invoker, Invocation invocation) throws RpcException {
         String traceId = MDCLogTracerContextUtil.getTraceId();
-        LOGGER.info("Attachment traceId = {}", traceId);
+        LOGGER.debug("Attachment traceId = {}", traceId);
 
         if (traceId != null) {
             RpcContext.getContext().setAttachment(TracingVariable.TRACE_ID, traceId);
