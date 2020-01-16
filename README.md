@@ -14,6 +14,8 @@
 
 4、支持将敏感数据脱敏后再输出到日志文件（目前支持手机号和身份证号的脱敏）；
 
+5、支持跨服务链路追踪（基于trace_id实现）
+
 
 # 二、使用log-access的配置步骤：
 
@@ -59,7 +61,7 @@
 ````java
 @EnableLogAccess
 public class LogAccessConfig {
-
+    
 }
 ````
 注：上面两种方式二选一即可
@@ -125,9 +127,9 @@ public class MessageFacadeImpl implements MessageFacade {
 
 【字段描述】
 访问时间：开始的访问时间，
-执行耗时：业务方法的执行时间，单位毫秒(ms)，
 执行结果：用于区分该请求是否正常响应，N 对应normal，表示正常响应，E 对应error，表示出现异常，
 请求类型：METHOD 表示普通方法、HTTP 表示http请求、DUBBO 表示dubbo请求，
+执行耗时：业务方法的执行时间，单位毫秒(ms)，
 消息跟踪号：对应trace_id，用于日志链路追踪
 请求参数：json格式串
 响应参数：json格式串
@@ -144,13 +146,87 @@ attachment：用于标记后面的是附件参数
 
 ### 5.1 普通方法的访问日志样例
 ```json
-2019-05-14 16:32:07.411|38|N|METHOD|com.xx.xx.XXService|xxMethod|10.1.1.48|10.1.1.48|3a1979e559e24c56b8b866731155c889|["1000008684","fast"]|{"status":200,"message":null,"data":{"code":"success","createTime":1557492448000,"updateTime":1557492979000},"error":false,"success":true}|attachtment|
+2019-05-14 16:32:07.411|N|METHOD|43ms|com.xx.xx.XXService|xxMethod|10.1.1.48|10.1.1.48|3a1979e559e24c56b8b866731155c889|["1000008684","fast"]|{"status":200,"message":null,"data":{"code":"success","createTime":1557492448000,"updateTime":1557492979000},"error":false,"success":true}|attachtment|
 ```
 ### 5.2 http接口的访问日志样例
 ```json
-2019-05-14 16:32:07.405|104|N|HTTP|xx-web|test/test|10.1.1.48|127.0.0.1|3a1979e559e24c56b8b866731155c889|fast|{"status":200,"message":null,"data":{"code":"success","createTime":1557492448000,"updateTime":1557492979000},"error":false,"success":true}|attachtment|
+2019-05-14 16:32:07.405|N|HTTP|104ms|xx-web|test/test|10.1.1.48|127.0.0.1|3a1979e559e24c56b8b866731155c889|fast|{"status":200,"message":null,"data":{"code":"success","createTime":1557492448000,"updateTime":1557492979000},"error":false,"success":true}|attachtment|
 ```
 ### 5.3 dubbo接口的访问日志样例
 ```json
-2019-05-14 13:54:42.880|21|NORMAL|DUBBO|dubbo://127.0.0.1:20885/group/com.xx.xx.XXFacade|queryXX|10.1.1.48|10.1.1.48:50542|3a1979e559e24c56b8b866731155c889|["1000008684",3,"fast"]|{"status":200,"message":null,"data":{"code":"success","createTime":1557492448000,"updateTime":1557492979000},"error":false,"success":true}|attachtment|
+2019-05-14 13:54:42.880|N|DUBBO|57ms|dubbo://127.0.0.1:20885/group/com.xx.xx.XXFacade|queryXX|10.1.1.48|10.1.1.48:50542|3a1979e559e24c56b8b866731155c889|["1000008684",3,"fast"]|{"status":200,"message":null,"data":{"code":"success","createTime":1557492448000,"updateTime":1557492979000},"error":false,"success":true}|attachtment|
 ```
+
+
+## 7、跨服务链路追踪
+
+### 7.1 rest服务间的链路追踪
+> 原理：通过自定义ServletTraceInfoAttachmentFilter，从request的header中获取trace_id，实现本服务的日志链路追踪。
+>
+> 注：若需跨服务将trace_id传递到服务方，那么需要根据不同的调用方式来进行扩展。
+>
+> 1、若基于RestTemplate，则扩展ClientHttpRequestInterceptor将trace_id设置到header中传递到服务提供方。
+>
+> 2、若基于Feign，则扩展RequestInterceptor将trace_id设置到header中传递到服务提供方。
+>
+```java
+@EnableLogAccess
+public class LogAccessConfig {
+    /**
+     * 配置http请求日志跟踪信息拦截器，header中无trace_id则生成
+     */
+    @Bean
+    public FilterRegistrationBean logFilterRegister() {
+        FilterRegistrationBean registration = new FilterRegistrationBean();
+        registration.setFilter(new ServletTraceInfoAttachmentFilter());
+        registration.setName(ServletTraceInfoAttachmentFilter.class.getSimpleName());
+        registration.addUrlPatterns("/*");
+        // 从小到大的顺序来依次过滤
+        registration.setOrder(1);
+        return registration;
+    }
+
+    /**
+     * 基于RestTemplate的服务调用
+     */
+    @Bean("restTemplate")
+    public RestTemplate restTemplate() {
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setRequestFactory(httpRequestFactory());
+        // 将trace_id设置到header中传递到服务提供方
+        restTemplate.setInterceptors(Arrays.asList(new ClientHttpRequestInterceptor(){
+            @Override
+            public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
+                String traceId = MDCLogTracerContextUtil.getTraceId();
+                if (traceId != null) {
+                    request.getHeaders().add(TracingVariable.TRACE_ID, traceId);
+                }
+                return execution.execute(request, body);
+            }
+        }));
+        return restTemplate;
+    }
+
+    /**
+     * 基于Feign的服务调用
+     */
+    @Bean
+    public RequestInterceptor requestInterceptor() {
+        RequestInterceptor requestInterceptor = template -> {
+            String traceId = MDCLogTracerContextUtil.getTraceId();
+            if (traceId != null) {
+                template.header(TracingVariable.TRACE_ID, traceId);
+            }
+        };
+        return requestInterceptor;
+    }
+}
+```
+
+
+### 7.2 dubbo服务间的链路追踪
+> 原理：dubbo提供了良好的spi扩展机制，通过扩展Filter，实现服务间的trace_id传递
+> 1、通过自定义DubboTraceInfoDetachmentFilter，从RpcContext的attachment属性中获取trace_id
+>
+> 2、通过自定义DubboTraceInfoAttachmentFilter，将trace_id设置到RpcContext的attachment属性中，透传到服务提供方
+>
