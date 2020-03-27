@@ -3,6 +3,7 @@
 ## 介绍
 将接口方法的访问日志（入参和出参）输出到access日志文件；
 支持的方法类型：http请求方法、dubbo请求方法、普通方法。
+注：可结合ELK(Elasticsearch,Logstash,Kibana)通用日志解决方案来可视化日志。
 
 # 一、log-access功能描述
 

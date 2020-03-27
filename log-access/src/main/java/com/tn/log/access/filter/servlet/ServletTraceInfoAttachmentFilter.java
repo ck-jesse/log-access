@@ -5,7 +5,6 @@ import com.tn.log.access.util.MDCLogTracerContextUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -33,6 +32,11 @@ public class ServletTraceInfoAttachmentFilter implements Filter {
      * 建议使用为系统标识的简称
      */
     private String traceIdPrefix;
+
+    /**
+     * 业务标识
+     */
+    private String bizId;
 
     public ServletTraceInfoAttachmentFilter() {
 
