@@ -231,3 +231,26 @@ public class LogAccessConfig {
 >
 > 2、通过自定义DubboTraceInfoAttachmentFilter，将trace_id设置到RpcContext的attachment属性中，透传到服务提供方
 >
+>
+
+### 7.3 跨线程池的链路追踪
+> 原理：通过对Runnable或Thread进行装饰，将主线程中ThreadLocal的内容设置到子线程的ThreadLocal即可
+> 1、
+```java
+
+
+Map<String, String> contextMap = MDC.getCopyOfContextMap();
+// 对Runnable进行装饰，将主线程的MDC内容设置到子线程的MDC中
+Runnable runnable = new Runnable() {
+    @Override
+    public void run() {
+        try {
+            MDC.setContextMap(contextMap);
+            runnable.run();
+        } finally {
+            MDC.clear();
+        }
+    }
+};
+
+```
