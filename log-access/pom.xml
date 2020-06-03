@@ -21,7 +21,7 @@
         <platform.common.util.version>1.0.0</platform.common.util.version>
 
         <!-- spring 版本保持与spring-boot中依赖的spring版本一致 -->
-        <spring.version>5.1.11.RELEASE</spring.version>
+        <spring.version>5.1.13.RELEASE</spring.version>
 
         <!-- servlet -->
         <servlet.api.version>3.1.0</servlet.api.version>
