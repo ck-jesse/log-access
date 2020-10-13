@@ -35,7 +35,7 @@
         <!-- jackson -->
         <jackson.version>2.11.0</jackson.version>
 
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13.1</junit.version>
         <lombok.version>1.18.4</lombok.version>
 
         <!-- 日志相关 -->
